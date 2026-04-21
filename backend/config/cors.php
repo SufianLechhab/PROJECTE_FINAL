@@ -30,5 +30,8 @@ return [
     'max_age' => 0,
 
     'supports_credentials' => true,
-
+'paths' => ['api/*'],
+'allowed_origins' => ['*'],
+'allowed_methods' => ['*'],
+'allowed_headers' => ['*'],
 ];

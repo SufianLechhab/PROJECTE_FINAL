@@ -19,13 +19,13 @@ class ActivitatController extends Controller
         ]);
 
         // Crear activitat
-        $activitat = new Activitat();
-        $activitat->trip_id = $tripId;
-        $activitat->nom = $request->nom;
-        $activitat->data = $request->data;
-        $activitat->hora = $request->hora;
-        $activitat->ubicacio = $request->ubicacio;
-        $activitat->save();
+        $activitat = Activitat::create([
+            'nom' => $request->nom,
+            'data' => $request->data,
+            'hora' => $request->hora,
+            'ubicacio' => $request->ubicacio,
+            'viatge_id' => $tripId
+        ]);
 
         return response()->json($activitat, 201);
     }

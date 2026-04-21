@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Viatge;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
 
 class ViatgeController extends Controller
 {
@@ -21,9 +24,8 @@ public function index()
             'data_inici' => $request->data_inici,
             'data_fi' => $request->data_fi,
             'descripcio' => $request->descripcio,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
         ]);
-
         return response()->json($viatge, 201);
     }
 

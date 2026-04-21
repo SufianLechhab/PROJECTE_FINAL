@@ -10,10 +10,17 @@ class Activitat extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['trip_id', 'nom', 'descripcio', 'data', 'hora', 'ubicacio'];
+    protected $fillable = [
+        'viatge_id',
+        'nom',
+        'descripcio',
+        'data',
+        'hora',
+        'ubicacio'
+    ];
 
     public function viatge()
     {
-        return $this->belongsTo(Viatge::class, 'trip_id');
+        return $this->belongsTo(Viatge::class, 'viatge_id');
     }
 }
