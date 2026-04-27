@@ -1,19 +1,31 @@
 import { useEffect, useState } from "react";
 
 function App() {
+  const API = "http://127.0.0.1:8000/api";
+
   const [viatges, setViatges] = useState([]);
+  const [user, setUser] = useState(null);
+
+  const [mode, setMode] = useState("login");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const [desti, setDesti] = useState("");
   const [dataInici, setDataInici] = useState("");
   const [dataFi, setDataFi] = useState("");
   const [editarId, setEditarId] = useState(null);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const [nousParticipants, setNousParticipants] = useState({});
   const [novesActivitats, setNovesActivitats] = useState({});
 
-  const API = "http://127.0.0.1:8000/api";
+  function getHeaders() {
+    return {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    };
+  }
 
   // LOGIN
   function login(e) {
@@ -29,47 +41,66 @@ function App() {
     })
       .then(res => res.json())
       .then(data => {
-        console.log("LOGIN:", data);
+        if (!data.token) {
+          alert("Credencials incorrectes");
+          return;
+        }
 
         localStorage.setItem("token", data.token);
-        alert("Login correcte");
-
+        carregarUser();
         carregarViatges();
+      });
+  }
+
+  // REGISTER
+  function register(e) {
+    e.preventDefault();
+
+    fetch(`${API}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ name, email, password }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.errors) {
+          alert("Error en el registre");
+          return;
+        }
+
+        alert("Usuari creat correctament");
+        setMode("login");
       });
   }
 
   function logout() {
     localStorage.removeItem("token");
+    setUser(null);
     setViatges([]);
   }
 
-  function getHeaders() {
-    return {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: "Bearer " + localStorage.getItem("token"),
-    };
+  function carregarUser() {
+    fetch(`${API}/user`, { headers: getHeaders() })
+      .then(res => res.json())
+      .then(data => setUser(data));
   }
 
-  // carregar vatges
   function carregarViatges() {
-    fetch(`${API}/viatges`, {
-      headers: getHeaders(),
-    })
+    fetch(`${API}/viatges`, { headers: getHeaders() })
       .then(res => res.json())
-      .then(data => {
-        console.log("VIATGES:", data);
-        setViatges([...data]);
-      });
+      .then(data => setViatges(Array.isArray(data) ? data : []));
   }
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
+      carregarUser();
       carregarViatges();
     }
   }, []);
 
-  // Crear / Editar
   function guardarViatge(e) {
     e.preventDefault();
 
@@ -95,7 +126,6 @@ function App() {
     });
   }
 
-  // Eliminar
   function eliminarViatge(id) {
     fetch(`${API}/viatges/${id}`, {
       method: "DELETE",
@@ -103,7 +133,6 @@ function App() {
     }).then(() => carregarViatges());
   }
 
-  // Editar
   function iniciarEdicio(v) {
     setEditarId(v.id);
     setDesti(v.desti);
@@ -111,25 +140,31 @@ function App() {
     setDataFi(v.data_fi);
   }
 
-  // Participants
+  // PARTICIPANTS (email)
   function afegirParticipant(tripId) {
-    const userId = nousParticipants[tripId];
-    if (!userId) return;
+    const email = nousParticipants[tripId];
+    if (!email) return;
 
     fetch(`${API}/viatges/${tripId}/participants`, {
       method: "POST",
       headers: getHeaders(),
-      body: JSON.stringify({
-        user_id: userId,
-        rol: "participant",
-      }),
-    }).then(() => {
-      carregarViatges();
-      setNousParticipants({ ...nousParticipants, [tripId]: "" });
-    });
+      body: JSON.stringify({ email }),
+    })
+      .then(async res => {
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error || "Error afegint participant");
+          return;
+        }
+
+        carregarViatges();
+        setNousParticipants({ ...nousParticipants, [tripId]: "" });
+      })
+      .catch(() => alert("Error de connexió"));
   }
 
-  // Activitats
+  // ACTIVITATS
   function afegirActivitat(tripId) {
     const activitat = novesActivitats[tripId];
 
@@ -148,26 +183,40 @@ function App() {
     });
   }
 
-  // SI NO HI A TOKEN → LOGIN
+  // LOGIN / REGISTER UI
   if (!localStorage.getItem("token")) {
     return (
       <div style={{ padding: "20px" }}>
-        <h2>Login</h2>
-        <form onSubmit={login}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit">Login</button>
-        </form>
+        {mode === "login" ? (
+          <>
+            <h2>Login</h2>
+            <form onSubmit={login}>
+              <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+              <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+              <button type="submit">Login</button>
+            </form>
+
+            <p>
+              No tens compte?{" "}
+              <button onClick={() => setMode("register")}>Registra't</button>
+            </p>
+          </>
+        ) : (
+          <>
+            <h2>Register</h2>
+            <form onSubmit={register}>
+              <input type="text" placeholder="Nom" value={name} onChange={e => setName(e.target.value)} />
+              <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+              <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+              <button type="submit">Registrar</button>
+            </form>
+
+            <p>
+              Ja tens compte?{" "}
+              <button onClick={() => setMode("login")}>Login</button>
+            </p>
+          </>
+        )}
       </div>
     );
   }
@@ -176,32 +225,19 @@ function App() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Gestor de Viatges</h1>
+
+      {user && <h2>Hola {user.name}</h2>}
+
       <button onClick={logout}>Logout</button>
 
       <form onSubmit={guardarViatge}>
-        <input
-          type="text"
-          placeholder="Destí"
-          value={desti}
-          onChange={(e) => setDesti(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          value={dataInici}
-          onChange={(e) => setDataInici(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          value={dataFi}
-          onChange={(e) => setDataFi(e.target.value)}
-          required
-        />
+        <input type="text" placeholder="Destí" value={desti} onChange={e => setDesti(e.target.value)} required />
+        <input type="date" value={dataInici} onChange={e => setDataInici(e.target.value)} required />
+        <input type="date" value={dataFi} onChange={e => setDataFi(e.target.value)} required />
         <button type="submit">{editarId ? "Guardar" : "Crear"}</button>
       </form>
 
-      {viatges.map((v) => (
+      {viatges.map(v => (
         <div key={v.id} style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}>
           <h3>{v.desti} ({v.data_inici} - {v.data_fi})</h3>
 
@@ -211,15 +247,19 @@ function App() {
           <div>
             <strong>Participants:</strong>
             {v.participants?.length > 0
-              ? v.participants.map(p => <div key={p.id}>Usuari {p.user_id}</div>)
+              ? v.participants.map(p => (
+                  <div key={p.id}>
+                    👤 {p.user?.name} ({p.user?.email})
+                  </div>
+                ))
               : <div>Cap participant</div>}
           </div>
 
           <input
-            type="number"
-            placeholder="User ID"
+            type="email"
+            placeholder="Email usuari"
             value={nousParticipants[v.id] || ""}
-            onChange={(e) =>
+            onChange={e =>
               setNousParticipants({ ...nousParticipants, [v.id]: e.target.value })
             }
           />
@@ -236,52 +276,7 @@ function App() {
               : <div>Cap activitat</div>}
           </div>
 
-          <input
-            type="text"
-            placeholder="Nom"
-            value={novesActivitats[v.id]?.nom || ""}
-            onChange={(e) =>
-              setNovesActivitats({
-                ...novesActivitats,
-                [v.id]: { ...novesActivitats[v.id], nom: e.target.value },
-              })
-            }
-          />
-          <input
-            type="date"
-            value={novesActivitats[v.id]?.data || ""}
-            onChange={(e) =>
-              setNovesActivitats({
-                ...novesActivitats,
-                [v.id]: { ...novesActivitats[v.id], data: e.target.value },
-              })
-            }
-          />
-          <input
-            type="time"
-            value={novesActivitats[v.id]?.hora || ""}
-            onChange={(e) =>
-              setNovesActivitats({
-                ...novesActivitats,
-                [v.id]: { ...novesActivitats[v.id], hora: e.target.value },
-              })
-            }
-          />
-          <input
-            type="text"
-            placeholder="Ubicació"
-            value={novesActivitats[v.id]?.ubicacio || ""}
-            onChange={(e) =>
-              setNovesActivitats({
-                ...novesActivitats,
-                [v.id]: { ...novesActivitats[v.id], ubicacio: e.target.value },
-              })
-            }
-          />
-
-          <button onClick={() => afegirActivitat(v.id)}>
-            Afegir activitat
-          </button>
+          <button onClick={() => afegirActivitat(v.id)}>Afegir activitat</button>
         </div>
       ))}
     </div>

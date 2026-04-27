@@ -21,14 +21,16 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 // --------------------------------------------------------------------------------------------------------------
 
-// ---------------- VIATGES ----------------
-Route::get('/viatges', [ViatgeController::class, 'index']);
-Route::post('/viatges', [ViatgeController::class, 'store']);
-Route::put('/viatges/{id}', [ViatgeController::class, 'update']);
-Route::delete('/viatges/{id}', [ViatgeController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
 
+    Route::get('/viatges', [ViatgeController::class, 'index']);
+    Route::post('/viatges', [ViatgeController::class, 'store']);
+    Route::put('/viatges/{id}', [ViatgeController::class, 'update']);
+    Route::delete('/viatges/{id}', [ViatgeController::class, 'destroy']);
 // ---------------- PARTICIPANTS ----------------
-Route::post('/viatges/{id}/participants', [ParticipantController::class, 'store']);
+    Route::post('/viatges/{id}/participants', [ParticipantController::class, 'store']);
+    // ---------------- VIATGES ----------------
 
-// ---------------- ACTIVITATS ----------------
-Route::post('/viatges/{id}/activitats', [ActivitatController::class, 'store']);
+    Route::post('/viatges/{id}/activitats', [ActivitatController::class, 'store']);
+
+});
