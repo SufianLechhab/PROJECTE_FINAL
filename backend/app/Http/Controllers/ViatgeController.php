@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Viatge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,14 +10,17 @@ use Illuminate\Support\Facades\Auth;
 class ViatgeController extends Controller
 {
     // Llistar viatges de l'usuari
-    public function index()
-    {
-        return response()->json(
-            Viatge::with('participants.user', 'activitats')
-                ->where('user_id', Auth::id())
-                ->get()
-        );
-    }
+public function index()
+{
+    return response()->json(
+        Viatge::with('participants.user', 'activitats')
+            ->where('user_id', Auth::id()) // creador
+            ->orWhereHas('participants', function ($q) {
+                $q->where('user_id', Auth::id()); // participant
+            })
+            ->get()
+    );
+}
 
     // Crear viatge
     public function store(Request $request)
@@ -41,9 +45,13 @@ class ViatgeController extends Controller
     // Mostrar un viatge
     public function show($id)
     {
-        $viatge = Viatge::findOrFail($id);
+        $viatge = Viatge::with('participants.user', 'activitats')
+            ->findOrFail($id);
 
-        if ($viatge->user_id !== Auth::id()) {
+        if (
+            $viatge->user_id !== Auth::id() &&
+            !$viatge->participants()->where('user_id', Auth::id())->exists()
+        ) {
             return response()->json(['error' => 'No autoritzat'], 403);
         }
 

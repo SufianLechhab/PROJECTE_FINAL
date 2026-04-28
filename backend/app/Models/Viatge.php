@@ -20,6 +20,7 @@ public function participants()
 }
 
 
+
 public function activitats()
 {
     return $this->hasMany(Activitat::class);
