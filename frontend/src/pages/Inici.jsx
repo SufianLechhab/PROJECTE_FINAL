@@ -72,6 +72,21 @@ function Inici() {
         </button>
       </div>
 
+      <div className="mb-4 position-relative">
+  <img
+    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+    className="img-fluid rounded"
+    style={{ height: "250px", width: "100%", objectFit: "cover" }}
+  />
+
+  <h2
+    className="position-absolute text-white"
+    style={{ bottom: "20px", left: "20px" }}
+  >
+    Planifica els teus viatges ✈️
+  </h2>
+</div>
+
       <form onSubmit={guardarViatge} className="card p-3 mb-4">
         <h5>Crear viatge</h5>
 
@@ -99,28 +114,37 @@ function Inici() {
         <button className="btn btn-success">Crear</button>
       </form>
 
-      {viatges.map(v => (
-        <div key={v.id} className="card p-3 mb-3">
-          <h5>{v.desti}</h5>
+{viatges.map(v => (
+  <div key={v.id} className="card shadow-sm mb-3">
+    <img
+      src={`https://source.unsplash.com/600x300/?${v.desti || "travel"}`}
+      className="card-img-top"
+      style={{ height: "150px", objectFit: "cover" }}
+    />
 
-          <div className="d-flex gap-2">
-            <button
-              className="btn btn-primary"
-              onClick={() => navigate(`/viatge/${v.id}`)}
-            >
-              Entrar
-            </button>
+    <div className="card-body">
+      <h5>{v.desti}</h5>
 
-            <button
-              className="btn btn-danger"
-              onClick={() => eliminarViatge(v.id)}
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      ))}
+      <div className="d-flex gap-2">
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate(`/viatge/${v.id}`)}
+        >
+          Entrar
+        </button>
+
+        <button
+          className="btn btn-danger"
+          onClick={() => eliminarViatge(v.id)}
+        >
+          Eliminar
+        </button>
+      </div>
     </div>
+  </div>
+))}
+
+    </div>   
   );
 }
 

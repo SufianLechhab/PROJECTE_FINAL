@@ -3,8 +3,12 @@ import { useParams } from "react-router-dom";
 
 function InfoViatge() {
   const { id } = useParams();
+
   const [viatge, setViatge] = useState(null);
   const [email, setEmail] = useState("");
+
+  const [dataInici, setDataInici] = useState("");
+  const [dataFi, setDataFi] = useState("");
 
   const [activitat, setActivitat] = useState({
     nom: "",
@@ -32,6 +36,7 @@ function InfoViatge() {
     carregarViatge();
   }, [id]);
 
+  //  PARTICIPANT
   function afegirParticipant() {
     fetch(`${API}/viatges/${id}/participants`, {
       method: "POST",
@@ -43,6 +48,7 @@ function InfoViatge() {
     });
   }
 
+  // ACTIVITAT
   function afegirActivitat() {
     fetch(`${API}/viatges/${id}/activitats`, {
       method: "POST",
@@ -61,13 +67,28 @@ function InfoViatge() {
     }).then(() => carregarViatge());
   }
 
+  // FILTRE PER RANG DE DATES
+  function carregarActivitatsFiltrades() {
+    let url = `${API}/viatges/${id}/activitats`;
+
+    if (dataInici && dataFi) {
+      url += `?data_inici=${dataInici}&data_fi=${dataFi}`;
+    }
+
+    fetch(url, { headers: getHeaders() })
+      .then(res => res.json())
+      .then(data =>
+        setViatge(prev => ({ ...prev, activitats: data }))
+      );
+  }
+
   if (!viatge) return <p>Carregant...</p>;
 
   return (
     <div className="container mt-4">
       <h1 className="mb-4">{viatge.desti}</h1>
 
-      {/* PARTICIPANTS */}
+      {/*  PARTICIPANTS */}
       <div className="card p-3 mb-4">
         <h5>Participants</h5>
 
@@ -87,10 +108,46 @@ function InfoViatge() {
         </button>
       </div>
 
-      {/* ACTIVITATS */}
+      {/*  ACTIVITATS */}
       <div className="card p-3">
         <h5>Activitats</h5>
 
+        {/*  FILTRE */}
+        <div className="mb-3">
+          <input
+            type="date"
+            className="form-control mb-2"
+            value={dataInici}
+            onChange={(e) => setDataInici(e.target.value)}
+          />
+
+          <input
+            type="date"
+            className="form-control mb-2"
+            value={dataFi}
+            onChange={(e) => setDataFi(e.target.value)}
+          />
+
+          <button
+            className="btn btn-primary me-2"
+            onClick={carregarActivitatsFiltrades}
+          >
+            Filtrar
+          </button>
+
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              setDataInici("");
+              setDataFi("");
+              carregarViatge();
+            }}
+          >
+            Mostrar totes
+          </button>
+        </div>
+
+        {/* LLISTA */}
         {viatge.activitats?.map(a => (
           <div key={a.id} className="d-flex justify-content-between">
             <span>
@@ -106,6 +163,7 @@ function InfoViatge() {
           </div>
         ))}
 
+        {/* FORMULARI */}
         <input
           className="form-control mt-2"
           placeholder="Nom"

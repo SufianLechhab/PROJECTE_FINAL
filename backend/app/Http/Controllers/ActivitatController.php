@@ -2,28 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Activitat;
 use App\Models\Viatge;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ActivitatController extends Controller
 {
     // Llistar activitats d’un viatge
-    public function index($tripId)
-    {
-        $viatge = Viatge::findOrFail($tripId);
+public function index(Request $request, $tripId)
+{
+    $viatge = Viatge::findOrFail($tripId);
 
-        // permisos (propietari o participant)
-        if (
-            $viatge->user_id !== Auth::id() &&
-            !$viatge->participants()->where('user_id', Auth::id())->exists()
-        ) {
-            return response()->json(['error' => 'No autoritzat'], 403);
-        }
-
-        return response()->json($viatge->activitats);
+    if (
+        $viatge->user_id !== Auth::id() &&
+        !$viatge->participants()->where('user_id', Auth::id())->exists()
+    ) {
+        return response()->json(['error' => 'No autoritzat'], 403);
     }
+
+    $query = Activitat::where('viatge_id', $tripId);
+
+    //  FILTRE PER RANG DE DATES
+    if ($request->has('data_inici') && $request->has('data_fi')) {
+        $query->whereBetween('data', [
+            $request->data_inici,
+            $request->data_fi
+        ]);
+    }
+
+    return response()->json($query->get());
+}
 
     // Crear activitat
     public function store(Request $request, $tripId)
