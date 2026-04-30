@@ -5,7 +5,7 @@ Gestor de Viatges
 
 Aquest projecte és una aplicació web per poder organitzar viatges en grup. La idea és que diferents usuaris puguin crear viatges, afegir activitats i convidar a altres persones.
 
-Està pensat sobretot per viatges d’oci, com caps de setmana o vacances, i així facilitar una mica la organització entre amics o grups.
+Està pensat sobretot per viatges d’oci, com caps de setmana o vacances, i així facilitar una mica la organització entre amics. familiars grups.
 
 2. Objectius
 Fer una aplicació funcional amb frontend i backend
@@ -13,7 +13,7 @@ Poder crear i gestionar viatges
 Fer login i registre d’usuaris
 Treballar amb API REST
 Practicar React i Laravel
-🛠️ 3. Tecnologies utilitzades
+ 3. Tecnologies utilitzades
 
 - Frontend
 React
@@ -93,7 +93,8 @@ PUT /api/viatges/{id}
 DELETE /api/viatges/{id}
 POST /api/viatges/{id}/participants
 POST /api/viatges/{id}/activitats
-🖥️ 9. Frontend
+
+ 9. Frontend
 
 El frontend està fet amb React.
 
@@ -135,5 +136,79 @@ npm start
 14. Usuari de prova
 
 Email: test@test.com
-
 Password: 123456
+
+---------------------------LINKS DE LA DOCUMENTACIO OFICIAL (ON HA SORTIT CADA COSA QUE HE FET)---------------------------------------------
+
+Documentació utilitzada
+
+Bootstrap (framework CSS utilitzat per al disseny de la interfície)
+https://getbootstrap.com/docs/5.3/getting-started/introduction/
+
+Containers i layout
+https://getbootstrap.com/docs/5.3/layout/containers/
+https://getbootstrap.com/docs/5.3/layout/grid/
+
+Components utilitzats durant el projecte:
+
+
+Alerts
+https://getbootstrap.com/docs/5.3/components/alerts/
+
+Badges
+https://getbootstrap.com/docs/5.3/components/badge/
+
+Spinners (loading)
+https://getbootstrap.com/docs/5.3/components/spinners/
+
+
+
+
+Hooks utilitzats:
+
+useState
+https://react.dev/reference/react/useState
+
+useEffect
+https://react.dev/reference/react/useEffect
+
+React Router (gestió de rutes del frontend)
+https://reactrouter.com/en/main
+
+
+useNavigate
+https://reactrouter.com/en/main/hooks/use-navigate
+
+useParams
+https://reactrouter.com/en/main/hooks/use-params
+
+Fetch API  peticions HTTP al backend
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+
+Unsplash API (utilitzada per obtenir imatges segons el destí dels viatges)
+https://unsplash.com/documentation
+
+
+Autenticació amb Sanctum
+https://laravel.com/docs/sanctum
+
+Renderitzat de llistes map
+https://react.dev/learn/rendering-lists
+
+Gestió d’esdeveniments onClick, onChange
+https://react.dev/learn/responding-to-events
+
+useNavigate canvi de pagina
+https://reactrouter.com/en/main/hooks/use-navigate
+
+useParams btenir parametres anteriors
+https://reactrouter.com/en/main/hooks/use-params
+
+Fetch API peticions HTTP back
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+
+Mètode fetch()
+https://developer.mozilla.org/en-US/docs/Web/API/fetch
+
+Promeses then, catch
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise

@@ -11,7 +11,8 @@ protected $fillable = [
     'data_inici',
     'data_fi',
     'descripcio',
-    'user_id'
+    'user_id',
+    
 ];
 
 public function participants()

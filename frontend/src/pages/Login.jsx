@@ -30,7 +30,7 @@ function Login() {
         }
 
         localStorage.setItem("token", data.token);
-        navigate("/"); // 🔥 anar a inici
+        navigate("/"); //  anar a inici
       });
   }
 
@@ -53,36 +53,61 @@ function Login() {
   }
 
   return (
-    <div>
-      {mode === "login" ? (
-        <>
-          <h2>Login</h2>
-          <form onSubmit={login}>
-            <input value={email} onChange={e => setEmail(e.target.value)} />
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-            <button>Login</button>
-          </form>
+<div className="d-flex justify-content-center align-items-center vh-100">
+  <div className="card shadow-lg p-4" style={{ width: "350px", borderRadius: "15px" }}>
 
-          <button onClick={() => setMode("register")}>
-            Registra't
-          </button>
-        </>
-      ) : (
-        <>
-          <h2>Register</h2>
-          <form onSubmit={register}>
-            <input value={name} onChange={e => setName(e.target.value)} />
-            <input value={email} onChange={e => setEmail(e.target.value)} />
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-            <button>Registrar</button>
-          </form>
+    <h2 className="text-center mb-4">
+      {mode === "login" ? "Iniciar sessió" : "Registre"}
+    </h2>
 
-          <button onClick={() => setMode("login")}>
-            Tornar a login
-          </button>
-        </>
+    <form onSubmit={mode === "login" ? login : register}>
+
+      {mode === "register" && (
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Nom"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
       )}
-    </div>
+
+      <input
+        type="email"
+        className="form-control mb-3"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      <input
+        type="password"
+        className="form-control mb-3"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <button className="btn btn-primary w-100">
+        {mode === "login" ? "Entrar" : "Registrar"}
+      </button>
+    </form>
+
+    <p className="text-center mt-3">
+      {mode === "login" ? "No tens compte?" : "Ja tens compte?"}
+      <br />
+      <button
+        className="btn btn-link"
+        onClick={() =>
+          setMode(mode === "login" ? "register" : "login")
+        }
+      >
+        {mode === "login" ? "Registra't" : "Inicia sessió"}
+      </button>
+    </p>
+
+  </div>
+</div>
   );
 }
 

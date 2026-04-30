@@ -92,11 +92,9 @@ function InfoViatge() {
       <div className="card p-3 mb-4">
         <h5>Participants</h5>
 
-{viatge.participants?.map(p => (
-  <div key={p.id}>
-    👤 {p.user.name} ({p.user.email})
-  </div>
-))}
+        {viatge.participants?.map(p => (
+          <div key={p.id}>👤 {p.user.name}</div>
+        ))}
 
         <input
           className="form-control mt-2"

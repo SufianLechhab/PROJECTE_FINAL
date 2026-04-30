@@ -37,28 +37,24 @@ function Inici() {
     carregarViatges();
   }, []);
 
-  async function guardarViatge(e) {
-  e.preventDefault();
+  function guardarViatge(e) {
+    e.preventDefault();
 
-  // generar imatge automàtica
-  const imatge = `https://source.unsplash.com/600x300/?${desti || "travel"}`;
-
-  fetch(`${API}/viatges`, {
-    method: "POST",
-    headers: getHeaders(),
-    body: JSON.stringify({
-      desti,
-      data_inici: dataInici,
-      data_fi: dataFi,
-      imatge, // 👈 IMPORTANT
-    }),
-  }).then(() => {
-    carregarViatges();
-    setDesti("");
-    setDataInici("");
-    setDataFi("");
-  });
-}
+    fetch(`${API}/viatges`, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify({
+        desti,
+        data_inici: dataInici,
+        data_fi: dataFi,
+      }),
+    }).then(() => {
+      carregarViatges();
+      setDesti("");
+      setDataInici("");
+      setDataFi("");
+    });
+  }
 
   function eliminarViatge(id) {
     fetch(`${API}/viatges/${id}`, {
