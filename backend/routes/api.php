@@ -37,4 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/activitats/{id}', [ActivitatController::class, 'update']);
     Route::delete('/activitats/{id}', [ActivitatController::class, 'destroy']);
 
+    //APUNTACIÓ
+    
+    Route::post('/activitats/{id}/apuntar', [ActivitatController::class, 'apuntar']);
+Route::post('/activitats/{id}/desapuntar', [ActivitatController::class, 'desapuntar']);
+
 });

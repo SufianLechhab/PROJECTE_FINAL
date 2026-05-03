@@ -43,20 +43,22 @@ public function index()
     }
 
     // Mostrar un viatge
-    public function show($id)
-    {
-        $viatge = Viatge::with('participants.user', 'activitats')
-            ->findOrFail($id);
+public function show($id)
+{
+    $viatge = Viatge::with([
+        'participants.user',
+        'activitats.usuaris'
+    ])->findOrFail($id);
 
-        if (
-            $viatge->user_id !== Auth::id() &&
-            !$viatge->participants()->where('user_id', Auth::id())->exists()
-        ) {
-            return response()->json(['error' => 'No autoritzat'], 403);
-        }
-
-        return response()->json($viatge);
+    if (
+        $viatge->user_id !== Auth::id() &&
+        !$viatge->participants()->where('user_id', Auth::id())->exists()
+    ) {
+        return response()->json(['error' => 'No autoritzat'], 403);
     }
+
+    return response()->json($viatge);
+}
 
     // Actualitzar viatge
     public function update(Request $request, $id)

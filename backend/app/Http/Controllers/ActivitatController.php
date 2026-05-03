@@ -32,8 +32,9 @@ public function index(Request $request, $tripId)
         ]);
     }
 
-    return response()->json($query->get());
-}
+return response()->json(
+    $query->with('usuaris')->get()
+);}
 
     // Crear activitat
     public function store(Request $request, $tripId)
@@ -116,4 +117,33 @@ public function index(Request $request, $tripId)
 
         return response()->json(null, 204);
     }
+
+public function apuntar($id)
+{
+
+    $activitat = Activitat::findOrFail($id);
+    $user = Auth::user();
+    // ❗ COMPROVAR USUARI
+    if (!$user) {
+        return response()->json(['error' => 'No autenticat'], 401);
+    }
+
+    // evitar duplicats
+    if ($activitat->usuaris()->where('user_id', $user->id)->exists()) {
+return response()->json(['message' => 'Ja apuntat'], 200);    }
+
+    $activitat->usuaris()->attach($user->id);
+
+    return response()->json(['message' => 'Apuntat correctament']);
+}
+
+public function desapuntar($id)
+{
+    $activitat = Activitat::findOrFail($id);
+    $user = Auth::user();
+
+    $activitat->usuaris()->detach($user->id);
+
+    return response()->json(['message' => 'Desapuntat']);
+}
 }

@@ -212,3 +212,6 @@ https://developer.mozilla.org/en-US/docs/Web/API/fetch
 
 Promeses then, catch
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+
+npm create vite@latest

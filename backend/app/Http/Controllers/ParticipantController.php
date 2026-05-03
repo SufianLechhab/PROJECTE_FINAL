@@ -6,39 +6,51 @@ use App\Http\Controllers\Controller;
 use App\Models\Participant;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ParticipantController extends Controller
 {
+
 public function store(Request $request, $id)
 {
-    // validar email
     $request->validate([
-        'email' => 'required|email'
+        'email' => 'required|email',
     ]);
 
-    // buscar usuari
+    // 🔍 buscar usuari
     $user = User::where('email', $request->email)->first();
 
+    $userExistent = true;
+
+    // ❗ si no existeix → crear-lo
     if (!$user) {
-        return response()->json(['error' => 'Usuari no trobat'], 404);
+        $userExistent = false;
+
+        $user = User::create([
+            'name' => explode('@', $request->email)[0],
+            'email' => $request->email,
+            'password' => Hash::make('123456'),
+        ]);
     }
 
-    // 🔥 COMPROVAR SI JA ÉS PARTICIPANT
-    $exists = Participant::where('viatge_id', $id)
+    // evitar duplicats
+    $existeix = Participant::where('viatge_id', $id)
         ->where('user_id', $user->id)
-        ->exists();
+        ->first();
 
-    if ($exists) {
-        return response()->json(['error' => 'Ja és participant'], 400);
+    if ($existeix) {
+        return response()->json(['message' => 'Ja és participant'], 400);
     }
 
-    // crear participant
-    $participant = new Participant();
-    $participant->viatge_id = $id;
-    $participant->user_id = $user->id;
-    $participant->rol = 'participant';
-    $participant->save();
+    //  afegir participant
+    Participant::create([
+        'viatge_id' => $id,
+        'user_id' => $user->id,
+    ]);
 
-    return response()->json($participant, 201);
+    return response()->json([
+        'message' => 'Participant afegit',
+        'creat' => !$userExistent
+    ]);
 }
 }

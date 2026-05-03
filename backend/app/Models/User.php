@@ -29,4 +29,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function activitats()
+{
+    return $this->belongsToMany(Activitat::class);
+}
 }

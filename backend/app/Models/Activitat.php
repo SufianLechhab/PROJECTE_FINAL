@@ -23,4 +23,9 @@ class Activitat extends Model
     {
         return $this->belongsTo(Viatge::class, 'viatge_id');
     }
+
+    public function usuaris()
+{
+    return $this->belongsToMany(User::class);
+}
 }
