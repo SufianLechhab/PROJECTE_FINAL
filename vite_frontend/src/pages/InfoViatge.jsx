@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 
-
 function InfoViatge() {
+    const navigate = useNavigate(); //  botó
   const { id } = useParams();
 
   const [viatge, setViatge] = useState(null);
@@ -38,7 +38,7 @@ const [tipus, setTipus] = useState("success");
     carregarViatge();
   }, [id]);
 
-  // 👤 AFEGIR PARTICIPANT
+  // AFEGIR PARTICIPANT
 const afegirParticipant = async () => {
   try {
     const data = await fetchData(`/viatges/${id}/participants`, {
@@ -66,7 +66,7 @@ const afegirParticipant = async () => {
   }
 };
 
-  // ➕ AFEGIR ACTIVITAT
+  // AFEGIR ACTIVITAT
   const afegirActivitat = async () => {
     try {
       await fetchData(`/viatges/${id}/activitats`, {
@@ -81,7 +81,7 @@ const afegirParticipant = async () => {
     }
   };
 
-  // ❌ ELIMINAR ACTIVITAT
+  //  ELIMINAR ACTIVITAT
   const eliminarActivitat = async (idAct) => {
     try {
       await fetchData(`/activitats/${idAct}`, {
@@ -135,8 +135,16 @@ const apuntarActivitat = async (idAct) => {
 
   
 return (
+  
   <div className="container mt-4">
-    <h1 className="mb-4">{viatge.desti}</h1>
+<button
+  className="btn btn-outline-dark mb-3"
+  onClick={() => navigate(-1)}
+>
+  ← Tornar enrere
+</button>
+    <h1 className="mb-4">{viatge.desti} / {viatge.data_inici} - {viatge.data_fi}</h1>
+
 
     {missatge && (
       <div className={`alert alert-${tipus} alert-dismissible fade show`} role="alert">
@@ -223,13 +231,13 @@ return (
       📅 {a.nom} - {a.data} {a.hora}
     </span>
 
-    {/* 👇 AQUÍ POSA ELS PARTICIPANTS */}
-    <div style={{ fontSize: "14px", color: "gray" }}>
-      👥 {a.usuaris?.length || 0} participants
-    </div>
+    {/*  AQUÍ POSA ELS PARTICIPANTS */}
+<div style={{ fontSize: "14px", color: "gray" }}>
+  👥 Participants: {a.usuaris?.map(u => u.name).join(", ") || "Cap"}
+</div>
   </div>
 
-  {/* 🔹 DRETA */}
+  {/* DRETA */}
   <div className="d-flex gap-2">
     <button
       className="btn btn-success btn-sm"

@@ -17,12 +17,12 @@ public function store(Request $request, $id)
         'email' => 'required|email',
     ]);
 
-    // 🔍 buscar usuari
+    //  buscar usuari
     $user = User::where('email', $request->email)->first();
 
     $userExistent = true;
 
-    // ❗ si no existeix → crear-lo
+    //  si no existeix → crear-lo
     if (!$user) {
         $userExistent = false;
 

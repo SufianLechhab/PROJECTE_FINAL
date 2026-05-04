@@ -105,7 +105,7 @@ return response()->json(
         $activitat = Activitat::findOrFail($id);
         $viatge = Viatge::findOrFail($activitat->viatge_id);
 
-        // 🔐 permisos
+        //  permisos
         if (
             $viatge->user_id !== Auth::id() &&
             !$viatge->participants()->where('user_id', Auth::id())->exists()
@@ -123,7 +123,7 @@ public function apuntar($id)
 
     $activitat = Activitat::findOrFail($id);
     $user = Auth::user();
-    // ❗ COMPROVAR USUARI
+    //  COMPROVAR USUARI
     if (!$user) {
         return response()->json(['error' => 'No autenticat'], 401);
     }

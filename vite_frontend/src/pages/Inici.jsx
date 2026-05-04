@@ -36,7 +36,7 @@ function Inici() {
     carregarViatges();
   }, []);
 
-  // ➕ CREAR VIATGE
+  //  CREAR VIATGE
   const guardarViatge = async (e) => {
     e.preventDefault();
 
@@ -69,7 +69,7 @@ const eliminarViatge = async (id) => {
       method: "DELETE",
     });
 
-    // 🔥 eliminar del state directament
+    //  eliminar del state directament
     setViatges(prev => prev.filter(v => v.id !== id));
 
   } catch (err) {

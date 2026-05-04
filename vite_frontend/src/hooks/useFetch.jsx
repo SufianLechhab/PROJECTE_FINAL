@@ -35,7 +35,7 @@ const fetchData = async (endpoint, options = {}, withToken = true) => {
     try {
       data = await response.json();
     } catch (e) {
-      // resposta buida (DELETE 204)
+      // resposta buida  204
     }
 
     if (!response.ok) {

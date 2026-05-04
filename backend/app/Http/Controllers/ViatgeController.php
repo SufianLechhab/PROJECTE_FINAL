@@ -65,7 +65,7 @@ public function show($id)
     {
         $viatge = Viatge::findOrFail($id);
 
-        // 🔐 comprovar permisos
+        // comprovar permisos
         if ($viatge->user_id !== Auth::id()) {
             return response()->json(['error' => 'No autoritzat'], 403);
         }
